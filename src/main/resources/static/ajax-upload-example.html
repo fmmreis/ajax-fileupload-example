@@ -107,6 +107,7 @@ function sendXHRequest(formData, uri) {
   xhr.upload.addEventListener('loadstart', onloadstartHandler, false);
   xhr.upload.addEventListener('progress', onprogressHandler, false);
   xhr.upload.addEventListener('load', onloadHandler, false);
+  xhr.upload.addEventListener('error', onerror, false);
   xhr.addEventListener('readystatechange', onreadystatechangeHandler, false);
   // Set up request
   xhr.open('POST', uri, true);
@@ -123,6 +124,13 @@ function onloadHandler(evt) {
   var div = document.getElementById('upload-status');
   div.innerHTML += '<' + 'br>File uploaded. Waiting for response.';
 }
+
+// Handle the end of the transmission
+function onerror(evt) {
+  var div = document.getElementById('upload-status');
+  div.innerHTML += '<' + 'br>Upload error: ' + evt.toString();
+}
+
 // Handle the progress
 function onprogressHandler(evt) {
   var div = document.getElementById('progress');
@@ -136,6 +144,7 @@ function onreadystatechangeHandler(evt) {
     readyState = evt.target.readyState;
     text = evt.target.responseText;
     status = evt.target.status;
+    console.log(evt);
   }
   catch(e) {
     return;
