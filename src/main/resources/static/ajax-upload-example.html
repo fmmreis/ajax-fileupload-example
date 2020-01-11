@@ -105,12 +105,10 @@ function sendXHRequest(formData, uri, j) {
   var xhr = new XMLHttpRequest();
   // Set up events
   xhr.upload.addEventListener('loadstart', onloadstartHandler, false);
-
   xhr.upload.addEventListener('progress', onprogressHandler.bind(null, j), false);
-
   xhr.upload.addEventListener('load', onloadHandler, false);
   xhr.upload.addEventListener('error', onerror, false);
-  xhr.addEventListener('readystatechange', onreadystatechangeHandler, false);
+  xhr.addEventListener('readystatechange', onreadystatechangeHandler.bind(null, j), false);
   // Set up request
   xhr.open('POST', uri, true);
   // Fire!
@@ -122,7 +120,7 @@ function onloadstartHandler(evt) {
   div.innerHTML = 'Upload started.';
 }
 // Handle the end of the transmission
-function onloadHandler(evt) {
+function onloadHandler(j, evt) {
   var div = document.getElementById('upload-status');
   div.innerHTML += '<' + 'br>File uploaded. Waiting for response.';
 }
@@ -131,6 +129,8 @@ function onloadHandler(evt) {
 function onerror(evt) {
   var div = document.getElementById('upload-status');
   div.innerHTML += '<' + 'br>Upload error: ' + evt.toString();
+  console.log("Error:");
+
 }
 
 // Handle the progress
@@ -141,23 +141,25 @@ function onprogressHandler(j, evt) {
   console.log("Progress: " + j + ": " + percent + '%');
 }
 // Handle the response from the server
-function onreadystatechangeHandler(evt) {
+function onreadystatechangeHandler(j, evt) {
   var status, text, readyState;
   try {
     readyState = evt.target.readyState;
     text = evt.target.responseText;
     status = evt.target.status;
-    //console.log(evt);
   }
   catch(e) {
     return;
   }
-  if (readyState == 4 && status == '200' && evt.target.responseText) {
+    if (!(readyState == 4 && status == '200' && evt.target.responseText)) {
+        return;
+    }
     var status = document.getElementById('upload-status');
     status.innerHTML += '<' + 'br>Success!';
     var result = document.getElementById('result');
     result.innerHTML = '<p>The server saw it as:</p><pre>' + evt.target.responseText + '</pre>';
-  }
+    var resp = obj = JSON.parse(evt.target.responseText);
+    console.log("Final:" + j + ": " + resp[0].result);
 }
   </script>
 
