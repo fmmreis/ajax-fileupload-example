@@ -116,6 +116,7 @@ function sendXHRequest(formData, uri, j) {
 }
 // Handle the start of the transmission
 function onloadstartHandler(evt) {
+  console.clear();
   var div = document.getElementById('upload-status');
   div.innerHTML = 'Upload started.';
 }
@@ -138,7 +139,7 @@ function onprogressHandler(j, evt) {
   var div = document.getElementById('progress');
   var percent = evt.loaded/evt.total*100;
   div.innerHTML = 'Progress: ' + percent + '%';
-  console.log("Progress: " + j + ": " + percent + '%');
+  //console.log("Progress: " + j + ": " + percent + '%');
 }
 // Handle the response from the server
 function onreadystatechangeHandler(j, evt) {
